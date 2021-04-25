@@ -10,16 +10,17 @@ equationForm.addEventListener("keypress", dataFetcher);
 function dataHandler(data){
     let dataDisplay = document.getElementById('data-display');
     
-    // if (dataDisplay.hasChildNodes() == true){
-    //     let childNodes = dataDisplay.childNodes;
+    if (dataDisplay.hasChildNodes() == true){
+        let childNodes = dataDisplay.childNodes;
         
-    //     for (let i = 0; i < childNodes.length; i++) {
-    //         childNodes[i].style.display = "none";
+        for (let i = 0; i < childNodes.length; i++) {
+
+            childNodes[i].style.display = "none";
             
-    //     }
+        }
 
 
-    // }
+    }
     
     let points = data.data;
     let header = document.createElement('li');
@@ -39,8 +40,8 @@ function dataHandler(data){
 function dataFetcher(e) {
 
     let equation = document.getElementById('equation');
-
-    if (equation != null && e.key === 'Enter'){
+    console.log(e)
+    if (equation != null && e.key === 'Enter' || e.type === "click"){
         let url = equation.getAttribute('name-space');
         let equationString = {"equation" : equation.value}
 
