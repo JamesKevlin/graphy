@@ -1,0 +1,24 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'graph/draw/css/style.css' %}">
+    <title>Draw me</title>
+</head>
+<body>
+    <div class="equation-form">
+        <label for="equation">Linear Equation</label>
+        <input type="text" name="equation" id="equation" name-space="{% url 'graph:equation-data' %}">
+        <button id="get-data-btn"> Sketch Equation!</button>
+    </div>
+    <div class="draw">
+        <ul id="data-display">
+
+        </ul>
+    </div>
+    <script src="{% static 'graph/draw/js/scripts.js' %}"></script>
+</body>
+</html>
