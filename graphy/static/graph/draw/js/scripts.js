@@ -2,16 +2,24 @@
 let dataFetchBtn = document.getElementById('get-data-btn');
 dataFetchBtn.addEventListener("click", dataFetcher);
 
+let equationForm = document.getElementById('equation');
+equationForm.addEventListener("keypress", dataFetcher);
+
+
+
 function dataHandler(data){
     let dataDisplay = document.getElementById('data-display');
     
-    if (dataDisplay.hasChildNodes == true){
-        let childNodes = dataDisplay.children
+    // if (dataDisplay.hasChildNodes() == true){
+    //     let childNodes = dataDisplay.childNodes;
+        
+    //     for (let i = 0; i < childNodes.length; i++) {
+    //         childNodes[i].style.display = "none";
+            
+    //     }
 
-        for (let child in childNodes) {
-            child.display = None
-        }
-    }
+
+    // }
     
     let points = data.data;
     let header = document.createElement('li');
@@ -28,11 +36,11 @@ function dataHandler(data){
     
 }
 
-function dataFetcher() {
+function dataFetcher(e) {
 
     let equation = document.getElementById('equation');
 
-    if (equation != null){
+    if (equation != null && e.key === 'Enter'){
         let url = equation.getAttribute('name-space');
         let equationString = {"equation" : equation.value}
 

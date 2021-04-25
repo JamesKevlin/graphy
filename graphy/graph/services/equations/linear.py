@@ -1,14 +1,23 @@
 class LinearFunctionService:
     def __init__(self,func):
-        self.func = func
+        self.func = func.lower()
         self.seperators = ['*', '/', '+', '-', '^']
 
     def interpret_and_solve(self):
         
-        split_equation = self.seperate_equation()
+        # split_equation = self.seperate_equation()
+        points = []
+        half_amount  = 10
+        
+        for i in range((0-half_amount), (half_amount+1)):
+            pre_eval_function = self.func.replace('x', '*' + str(i))
+            post_eval_function = eval(pre_eval_function)
 
+            points.append([i, post_eval_function])
 
-        return {"result" : 'success' , 'points' : [[1,1],[2,2]]}
+        print(len(points))
+
+        return {"result" : 'success' , 'points' : points}
         
 
     def validator(self,data) -> bool:

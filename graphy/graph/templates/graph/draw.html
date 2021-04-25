@@ -11,13 +11,11 @@
 <body>
     <div class="equation-form">
         <label for="equation">Linear Equation</label>
-        <input type="text" name="equation" id="equation" name-space="{% url 'graph:equation-data' %}">
+        <input autofocus type="text" name="equation" id="equation" name-space="{% url 'graph:equation-data' %}">
         <button id="get-data-btn"> Sketch Equation!</button>
     </div>
     <div class="draw">
-        <ul id="data-display">
-
-        </ul>
+        <ul id="data-display"></ul>
     </div>
     <script src="{% static 'graph/draw/js/scripts.js' %}"></script>
 </body>
