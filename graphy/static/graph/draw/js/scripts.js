@@ -28,9 +28,9 @@ function dataHandler(data){
 
 
     points.forEach(point => {
-        let temp = document.createElement('li')
+        let temp = document.createElement('li');
         
-        temp.innerText = point[0] + '   ' + point[1]
+        temp.innerText = '(' + point[0] + '  ,  ' + point[1] + ')';
         dataDisplay.appendChild(temp);
     });
 
