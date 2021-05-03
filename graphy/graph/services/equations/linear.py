@@ -4,6 +4,7 @@ from graph.services.math.arithmetic import ArithmeticService
 class LinearFunctionService:
     def __init__(self,func):
         self.func = func.lower().replace(' ','')
+        self.looped = 0
         self.level_four = ['(', ')']
         self.level_three = ['^']
         self.level_two = ['*', '/']
@@ -26,24 +27,27 @@ class LinearFunctionService:
         
         resp = {}
         points = []
-        half_amount  = 1
+        # half_amount  = -5
         try:
-            for i in range(0, half_amount):
+            for i in range(-5, 6):
+
 
                 pre_eval_function = self.parse_and_lint(func=self.func,
                                                         x_val=i,
                                                         )
-
+                
 
                 evaluated_function = self.evaluate_function(pre_eval_function)
+                print(" ")
                 points.append([i, evaluated_function]) 
 
             resp['result'] = 'success'
         except Exception as e:
-            print(e)
+            print("error in interpret_and_solve: ",e)
             resp['result'] = 'fail'
             resp['points'] = points
 
+        print(points)
         resp['points'] = points
         return resp
 
@@ -55,7 +59,8 @@ class LinearFunctionService:
     def parse_and_lint(self, **kwargs):
         linters = [
             self.replace_x,
-            self.add_multiply_for_parentheses
+            self.add_multiply_for_parentheses,
+            # self.validator
         ]
 
         for linter in linters:
@@ -66,17 +71,26 @@ class LinearFunctionService:
     
     def evaluate_function(self, func):
         evaluated_func = None
+        _has_parentheses = self.has_parentheses(func)
+
+
+    
+
+        if _has_parentheses:
+            evaluated_func = self.evaluate_parentheses(func)
+        else:
+            evaluated_func = self.evaluate_expression(func)
+        return evaluated_func
+
+    def has_parentheses(self, func):
         has_parenthesis = False
 
         for char in func:
             if char in self.level_four:
                 has_parenthesis = True
+                break
 
-        if has_parenthesis:
-            evaluated_func = self.evaluate_parentheses(func)
-        else:
-            evaluated_func = self.evaluate_expression(func)
-        return evaluated_func
+        return has_parenthesis
 
     def replace_x(self, **kwargs):
         
@@ -89,10 +103,8 @@ class LinearFunctionService:
             if char == 'x':
                 if counter == 0:
                     new_func = new_func + replacement
-                elif func[counter].isnumeric():
-                    new_func = new_func + '*' + replacement
                 else:
-                    new_func = new_func + replacement
+                    new_func = new_func + '(' + replacement + ')'
             else:
                 new_func = new_func + char
             counter += 1
@@ -129,6 +141,12 @@ class LinearFunctionService:
     def evaluate_expression(self,func):
         solved = False
 
+        func = self.handle_plus_minus(func)
+        func = self.handle_minus_minus(func)
+        func = self.handle_multi_plus(func)
+
+        # func = self.handle_minus_paren_minus(func)
+
         while not solved:
             index = 0
             solved = True
@@ -144,70 +162,202 @@ class LinearFunctionService:
                     break
 
             if index == 0:
-
+                
                 break
 
             left, right = self.sort_data(func,index)
 
+            
+
             computation = "{}{}{}".format(left , middle , right)
 
-            result = str(self.arith_dict[middle](float(left),float(right)))
-
+            if left and right:
+                
+                result = str(self.arith_dict[middle](float(left),float(right)))
+                
             if computation == func:
                 func = result
             else:
+
                 func = func.replace(computation, result)
+
 
         return func
 
-    def evaluate_parentheses(self, func):
-        # TODO
-        left = []
-        right = []
-        pairs = []
 
-        counter = 0
-        for char in func:
-            if char == '(':
-                left.append(counter)
-            elif char == ')':
-                right.append(counter)
+    def evaluate_parentheses(self, func, loop_amount = 0):
+        
 
-            if len(left) != 0 and len(right) != 0:
-                pairs.append(
-                                (
-                                    left[len(left)-1],
-                                    right[0],
-                                    
-                                )
-                            )
-                left.pop(len(left)-1)
-                right.pop(0)
+        if func == '' or func == '(':
+            
+            return ''
+        
+        loop_amount +=1
+
+        if loop_amount == 2000:
+            raise RecursionError
+
+
+        if self.has_parentheses(func):
+            while self.has_parentheses(func):
                 
 
+                
+                try:
+                    return float(func)
+                except Exception:
+                    pass
+
+                data = self.get_chunk(func)
+
+
+
+                func_slice = data['chunk'] 
+
+
+
+
+
+                solved_func_slice = self.evaluate_parentheses(func_slice,loop_amount=loop_amount)
+
+
+                before_slice = ""
+                after_slice = ""
+
+                if data['start'] >= 0:
+
+                    before_slice = func[0:data['start']]
+                    after_slice = func[data['end']+1:]
+
+
+
+
+                func = before_slice + solved_func_slice + after_slice
+    
+
+
+                func = self.handle_minus_minus(func)
+
+        func = self.evaluate_expression(func)
+
+        
+        return func
+
+    def get_chunk(self,func):
+        start = -1
+        end = -1
+
+        left = []
+        right = []
+
+        chunk = ""
+
+        for x in range(0,len(func)):
+            if func[x] == '(':
+                if start == -1:
+                    start = x
+                left.append(x)
+            elif func[x] == ')':
+                end = x
+                right.append(x)
+
+            if len(left) != 0 and len(left) == len(right):
+                break
+
+
+        if start != -1:
+            chunk = func[start+1:end]
+
+
+
+        
+        try:
+
+            if len(chunk) == (len(func)-2):
+                chunk = str(float(chunk))
+                
+                start = -1
+                end = -1
+        except Exception:
+            
+            pass
+        
+        data = {
+            'chunk' : chunk,
+            'start' : start,
+            'end'   : end
+        }
+
+        return data            
+
+    def handle_plus_minus(self,func):
+        counter = 0
+        new_func = ""
+
+        for char in func:
+            if char == '+':
+                if func[counter+1] != '-':
+                    new_func = new_func + char
+            else:
+                new_func = new_func + char
+
+            counter +=1
+            
+
+        return new_func
+
+
+    def handle_minus_minus(self,func):
+
+        counter = 0
+        new_func = ""
+        skip = False
+
+        for char in func:
+            if char == '-' and skip == False:
+                if func[counter+1] != '-':
+                    new_func = new_func + char
+                else:
+                    skip = True
+                    new_func = new_func + '+'
+            elif skip == False:
+                new_func = new_func + char
+            elif skip == True:
+                skip = False
+
+            counter +=1
+            
+        return new_func
+
+    def handle_multi_plus(self,func):
+
+        counter = 0
+        new_func = ""
+        skip = False
+
+        for char in func:
+            if char == '*' and skip == False:
+                if func[counter+1] != '+':
+                    new_func = new_func + char
+                else:
+                    skip = True
+                    new_func = new_func + char
+            elif skip == False:
+                new_func = new_func + char
+            elif skip == True:
+                skip = False
 
             counter +=1
 
-        if len(left) != len(right):
-            print("oh no")
-            # TODO raise error
-            pass
+        return new_func
 
 
-        print(pairs)
-        for pair in pairs:
-            print(func[pair[0]:pair[1]+1])
+    def remove_negative_sign(self, func):
 
-        '''
-        output of : 1+(8(-3)(9-3))
+        if len(func) >= 3 and func[0] == '-' and func[1] == '-':
+            func = func[1:]
 
-        [(5, 8), (10, 14), (2, 15)]
-        pairs:
-            - (-3)
-            - (9-3)
-            - (8*(-3)*(9-3))
-        '''
-
+        return func
 
 
 
@@ -215,7 +365,7 @@ class LinearFunctionService:
         index = 0
         for char in func:
             
-            if char in level:
+            if char in level and not (index == 0 and func[0] == '-'):
                 break
             index += 1
 
@@ -236,26 +386,30 @@ class LinearFunctionService:
             for char in func[index+1:]:
                 right_data = right_data + char
 
-
-
             left_data = [x for x in left_data]
             right_data = [x for x in right_data]
 
 
+            counter = 0
             for char in left_data:
-                if char not in self.levels:
+                if char not in self.levels or (char == '-' and counter == 0):
+                    if char == '-':
+                        counter = 1
                     left = char + left
                 else:
                     break
 
+            counter = 0
             for char in right_data:
-                if char not in self.levels:
+                if char not in self.levels or (char == '-' and counter == 0):
+                    if char == '-':
+                        counter = 1
                     right = right + char
                 else:
                     break
-            
+
             return left, right
         
 
-    def validator(self,data) -> bool:
-        return True
+    def validator(self,func) -> str:
+        return func

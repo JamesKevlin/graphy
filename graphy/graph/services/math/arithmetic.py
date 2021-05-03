@@ -41,6 +41,7 @@ class ArithmeticService:
 
             return _diff
         except Exception:
+            
             raise ArithmeticError
 
     # def parentheses
