@@ -1,0 +1,18 @@
+body{
+    height: 100%;
+}
+
+
+.draw {
+    border: 0.15em solid #696767;
+    border-radius: 3px;
+    width: 80%;
+}
+.content-container {
+    width: 80%;
+    height: 50%;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    margin: 0 auto;
+}

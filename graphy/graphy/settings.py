@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'graph',
+    'home',
 ]
 
 MIDDLEWARE = [
@@ -69,7 +70,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'graphy.wsgi.application'
+ASGI_APPLICATION = 'graphy.asgi.application'
 
 
 # Database

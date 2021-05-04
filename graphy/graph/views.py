@@ -8,6 +8,8 @@ from .services.equations.router import EquationDataService
 
 class LinearEquationAPI(APIView):
 
+    
+
     def post(self, request):
         data = {
             "message" : 'fail',
@@ -28,6 +30,8 @@ class LinearEquationAPI(APIView):
 
 class LinearEquationView(View):
     
+    
+
     template_name = 'graph/draw.html'
 
     def get(self, request):

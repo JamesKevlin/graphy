@@ -1,9 +1,9 @@
 // create global vars and event listeners
-let dataFetchBtn = document.getElementById('get-data-btn');
-dataFetchBtn.addEventListener("click", dataFetcher);
+// let dataFetchBtn = document.getElementById('get-data-btn');
+// dataFetchBtn.addEventListener("click", dataFetcher);
 
-let equationForm = document.getElementById('equation');
-equationForm.addEventListener("keypress", dataFetcher);
+// let equationForm = document.getElementById('equation');
+// equationForm.addEventListener("keypress", dataFetcher);
 
 
 
@@ -36,32 +36,4 @@ function dataHandler(data){
 
     
 }
-
-function dataFetcher(e) {
-
-    let equation = document.getElementById('equation');
-    console.log(e)
-    if (equation != null && e.key === 'Enter' || e.type === "click"){
-        let url = equation.getAttribute('name-space');
-        let equationString = {"equation" : equation.value}
-
-
-        fetch(url, {
-            method : 'POST',
-            cache: 'no-cache',
-            body : JSON.stringify(equationString),
-            headers: {
-                'Content-Type': 'application/json'
-            }
-
-            
-            })
-            .then(response => response.json())
-            .then(data => dataHandler(data));
-            
-    }
-
-
-}
-
 

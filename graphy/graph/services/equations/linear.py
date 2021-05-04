@@ -29,7 +29,7 @@ class LinearFunctionService:
         points = []
         # half_amount  = -5
         try:
-            for i in range(-5, 6):
+            for i in range(-15, 15):
 
 
                 pre_eval_function = self.parse_and_lint(func=self.func,
@@ -38,7 +38,6 @@ class LinearFunctionService:
                 
 
                 evaluated_function = self.evaluate_function(pre_eval_function)
-                print(" ")
                 points.append([i, evaluated_function]) 
 
             resp['result'] = 'success'
