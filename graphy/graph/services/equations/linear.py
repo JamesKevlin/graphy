@@ -142,6 +142,7 @@ class LinearFunctionService:
         solved = False
 
         func = self.handle_plus_minus(func)
+        # func = self.handle_minus_plus(func) 
         func = self.handle_minus_minus(func)
         func = self.handle_multi_plus(func)
 
@@ -213,11 +214,6 @@ class LinearFunctionService:
 
 
                 func_slice = data['chunk'] 
-
-
-
-
-
                 solved_func_slice = self.evaluate_parentheses(func_slice,loop_amount=loop_amount)
 
 
@@ -267,9 +263,6 @@ class LinearFunctionService:
 
         if start != -1:
             chunk = func[start+1:end]
-
-
-
         
         try:
 
